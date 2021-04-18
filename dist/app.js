@@ -94,7 +94,7 @@ attachSearch();
 
 var geoJson;
 $.ajax({
-  url: "/dist/ufo.json",
+  url: "./dist/ufo.json",
   type: 'GET',
   cache: true,
   dataType: 'json', // added data type
