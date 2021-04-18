@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Lock viewport to prevent scaling -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="description" content="UFO Watch">
+  <meta name="author" content="Jake Neyer">
+  <title>UFO Watch</title>
+
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  <!-- Calcite Maps Bootstrap -->
+  <link rel="stylesheet" href="/dist/css/calcite-maps-bootstrap.min-v0.10.css">
+
+  <!-- Calcite Maps -->
+  <link rel="stylesheet" href="/dist/css/calcite-maps-esri-leaflet.min-v0.10.css">
+  <link rel="stylesheet" href="/dist/fonts/calcite/calcite-ui.css">
+
+  <!-- Load Leaflet from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+  <!-- Load Esri Leaflet from CDN -->
+  <script src="https://unpkg.com/esri-leaflet@3.0.1/dist/esri-leaflet.js" integrity="sha512-JmpptMCcCg+Rd6x0Dbg6w+mmyzs1M7chHCd9W8HPovnImG2nLAQWn3yltwxXRM7WjKKFFHOAKjjF2SC4CgiFBg==" crossorigin=""></script>
+
+  <!-- Load Esri Leaflet Geocoder from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@3.0.0/dist/esri-leaflet-geocoder.css" integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g==" crossorigin="">
+  <script src="https://unpkg.com/esri-leaflet-geocoder@3.0.0/dist/esri-leaflet-geocoder.js" integrity="sha512-vZbMwAf1/rpBExyV27ey3zAEwxelsO4Nf+mfT7s6VTJPUbYmD2KSuTRXTxOFhIYqhajaBU+X5PuFK1QJ1U9Myg==" crossorigin=""></script>
+
+  <!-- Load Leaflet MarkerCluster and Esri Leaflet Cluster from CDN -->
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" integrity="sha512-BBToHPBStgMiw0lD4AtkRIZmdndhB6aQbXpX7omcrXeG2PauGBl2lzq2xUZTxaLxYz5IDHlmneCZ1IJ+P3kYtQ==" crossorigin="">
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" integrity="sha512-RLEjtaFGdC4iQMJDbMzim/dOvAu+8Qp9sw7QE4wIMYcg2goVoivzwgSZq9CsIxp4xKAZPKh5J2f2lOko2Ze6FQ==" crossorigin="">
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js" integrity="sha512-MQlyPV+ol2lp4KodaU/Xmrn+txc1TP15pOBF/2Sfre7MRsA/pB4Vy58bEqe9u7a7DczMLtU5wT8n7OblJepKbg==" crossorigin=""></script>
+  <script src="https://unpkg.com/esri-leaflet-cluster@2.1.0/dist/esri-leaflet-cluster.js" integrity="sha512-fEdNFHisleVtEYdLhW4Z2RsR7TN6hLutE/+O4D+skfTNY2rlHm8HOZARPWkdrFFy/+i2KjFxcZAKTUWaVfbV0g==" crossorigin=""></script>
+
+
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    .calcite-dropdown {
+      margin-top: 1.5vw;
+    }
+
+    .calcite-navbar-search {
+      margin-top: 0;
+      margin-right: 5px;
+      margin-bottom: 2px;
+      padding: 2px 0;
+    }
+
+    .calcite-nav-bottom .panel-body .geocoder-control-suggestions.leaflet-bar {
+      bottom: auto;
+    }
+
+    .all {
+      background-color: black;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100%;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top {
+      margin-bottom: -53px;
+      margin-left: 5px;
+      background-color: transparent;
+      border: 2px solid white;
+      border-bottom-color: transparent;
+      border-right-color: transparent;
+      border-radius: 100px;
+      width: 100px;
+      height: 100px;
+      transform: rotateY(0deg) rotate(45deg);
+    }
+
+    .inner-oval {
+      align-items: center;
+      border: 2px solid white;
+      width: 180px;
+      height: 30px;
+      border-radius: 50px;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .circle1 {
+      border: 2px solid white;
+      width: 10px;
+      height: 10px;
+      border-radius: 50px;
+      animation: zoom 2s linear 0s infinite;
+    }
+
+    .circle2 {
+      border: 2px solid white;
+      width: 10px;
+      height: 10px;
+      border-radius: 50px;
+      animation: zoom 3s linear 0s infinite;
+      animation-delay: 1s;
+    }
+
+    .circle3 {
+      border: 2px solid white;
+      width: 10px;
+      height: 10px;
+      border-radius: 50px;
+      animation: zoom 2s linear 0s infinite;
+      animation-delay: 1.5s;
+    }
+
+    @keyframes zoom {
+      0% {
+        backround-color: black;
+      }
+
+      50% {
+        background-color: white;
+      }
+
+      100% {
+        background-color: black;
+      }
+    }
+  </style>
+
+</head>
+
+<div id="loader">
+  <div class="all">
+    <div class="container row h-100 justify-content-center align-items-center">
+      <div class="top"></div>
+      <div class="inner-oval">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<body class="calcite-maps calcite-nav-top">
+  <div id="content">
+    <!-- Navbar -->
+    <nav class="navbar calcite-navbar navbar-fixed-top calcite-text-light calcite-bg-dark">
+      <!-- Menu -->
+      <div class="dropdown calcite-dropdown calcite-text-dark calcite-bg-light" role="presentation">
+        <a class="dropdown-toggle" role="menubutton" aria-haspopup="true" aria-expanded="false" tabindex="0">
+          <div class="calcite-dropdown-toggle">
+            <span class="sr-only">Toggle dropdown menu</span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </a>
+        <ul class="dropdown-menu" role="menu">
+          <li><a role="menuitem" tabindex="0" href="#" data-target="#panelBasemaps" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Basemaps</a></li>
+          <li><a role="menuitem" tabindex="0" href="#" data-target="#panelInfo" aria-haspopup="true"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
+          <li><a role="menuitem" tabindex="0" href="/swagger/index.html" aria-haspopup="true"><span class="glyphicon glyphicon-list-alt"></span> API</a></li>
+          <li><a role="menuitem" tabindex="0" href="#" id="calciteToggleNavbar" aria-haspopup="true"><span class="glyphicon glyphicon-fullscreen"></span> Full Map</a></li>
+        </ul>
+      </div>
+      <!-- Title -->
+      <div class="calcite-title calcite-overflow-hidden">
+        <span class="calcite-title-main">UFO Watch</span>
+        <span class="calcite-title-sub hidden-xs"></span>
+      </div>
+      <ul class="calcite-nav nav navbar-nav">
+        <li>
+          <div class="calcite-navbar-search hidden-xs">
+            <div id="geocode"></div>
+          </div>
+        </li>
+      </ul>
+      <!-- Nav -->
+    </nav>
+
+    <!-- Map  -->
+
+    <div class="calcite-map">
+      <div id="map" class="calcite-map-absolute"></div>
+    </div><!-- /.container -->
+
+    <!-- Panels -->
+
+    <div class="calcite-panels calcite-panels-right calcite-text-light calcite-bg-dark panel-group">
+
+      <div id="panelInfo" class="panel collapse in">
+      <div id="headingInfo" class="panel-heading" role="tab">
+        <div class="panel-title">
+          <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseInfo" aria-expanded="true" aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span
+              class="panel-label">About</span></a>
+          <a class="panel-close" role="button" data-toggle="collapse" tabindex="0" href="#panelInfo"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+        </div>
+      </div>
+      <div id="collapseInfo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingInfo">
+        <div class="panel-body">
+          <p>Data is sourced from <a href="http://www.nuforc.org/">NUFORC</a></p>
+          <p>Built and run by <a href="https://github.com/JakeNeyer">me</a> </p>
+        </div>
+      </div>
+    </div>
+
+
+      <!-- Search Panel -->
+      <div id="panelSearch" class="panel collapse hidden-sm hidden-md hidden-lg">
+        <div id="headingSearch" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseSearch" aria-expanded="false" aria-controls="collapseSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span><span
+                class="panel-label">Search</span></a>
+            <a class="panel-close" role="button" data-toggle="collapse" tabindex="0" href="#panelSearch"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+          </div>
+        </div>
+        <div id="collapseSearch" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSearch">
+          <div class="panel-body calcite-body-expander">
+            <div id="geocodeMobile"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="panelBasemaps" class="panel collapse">
+        <div id="headingBasemaps" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseBasemaps" aria-expanded="false" aria-controls="collapseBasemaps"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span><span
+                class="panel-label">Basemaps</span></a>
+            <a class="panel-close" role="button" data-toggle="collapse" tabindex="0" href="#panelBasemaps"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+          </div>
+        </div>
+        <div id="collapseBasemaps" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingBasemaps">
+          <div class="panel-body">
+            <select id="selectStandardBasemap" class="form-control">
+              <option value="Streets">Streets</option>
+              <option value="Imagery">Satellite</option>
+              <option value="NationalGeographic">National Geographic</option>
+              <option value="Topographic">Topographic</option>
+              <option value="Gray">Gray</option>
+              <option selected value="DarkGray">Dark Gray</option>
+              <option value="OpenStreetMap">Open Street Map</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </div>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/dist/js/jquery/calcitemaps-v0.10.js"></script>
+
+
+<script src="/dist/app.js"></script>
+
+</html>
